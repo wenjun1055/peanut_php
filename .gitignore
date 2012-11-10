@@ -1,0 +1,17 @@
+#ignore
+tests/*
+a*
+build/*
+config*
+include/*
+in*
+l*
+Make*
+m*
+modules/*
+peanut_php.l*
+*.txt
+*.ini
+.deps
+.libs/*
+run-tests.php
