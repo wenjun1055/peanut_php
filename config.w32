@@ -1,0 +1,13 @@
+// $Id$
+// vim:ft=javascript
+
+// If your extension references something external, use ARG_WITH
+// ARG_WITH("peanut_php", "for peanut_php support", "no");
+
+// Otherwise, use ARG_ENABLE
+// ARG_ENABLE("peanut_php", "enable peanut_php support", "no");
+
+if (PHP_PEANUT_PHP != "no") {
+	EXTENSION("peanut_php", "peanut_php.c");
+}
+

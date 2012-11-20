@@ -9,8 +9,8 @@
 		<th>方法说明</th>
 	</tr>
 	<tr>
-		<td>2012-11-7</td>
-		<td>peanut_multiple_array</td>
-		<td>http://wenjun.in/?p=516</td>
+		<td>2012-11-20</td>
+		<td>peanut_array_keys</td>
+		<td>实现array_keys</td>
 	</tr>
 </table>
