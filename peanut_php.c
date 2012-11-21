@@ -41,7 +41,8 @@ static int le_peanut_php;
 const zend_function_entry peanut_php_functions[] = {
 	PHP_FE(confirm_peanut_php_compiled,	NULL)		/* For testing, remove later. */
 	PHP_FE(peanut_array_keys, NULL)
-	PHP_FE_END	/* Must be the last line in peanut_php_functions[] */
+	PHP_FE(peanut_array_change_key_case, NULL)
+  PHP_FE_END	/* Must be the last line in peanut_php_functions[] */
 };
 /* }}} */
 

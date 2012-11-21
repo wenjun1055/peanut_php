@@ -1,2 +1,9 @@
-/* 对应的PHP的数组方法：key */
+#define CASE_LOWER  0
+#define CASE_UPPER  1
+
+
+/* array_keys */
 PHP_FUNCTION(peanut_array_keys);
+
+/* array_change_key_case */
+PHP_FUNCTION(peanut_array_change_key_case);

@@ -17,7 +17,7 @@ PHP_FUNCTION(peanut_array_keys)
     long num_key;
     array_init(return_value);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array, &array_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE)
     {
         RETUTN_NULL();
     }
@@ -40,10 +40,46 @@ PHP_FUNCTION(peanut_array_keys)
                 add_next_index_zval(return_value, temp_key);
         }
         zend_hash_move_forward_ex(arr_hash, &pointer);
+     } 
+}
+
+PHP_FUNCTION(peanut_array_change_key_case)
+{
+  zval *array, **value;
+  HashTable *arr_hash;
+  HashPosition pointer;
+  char *key;
+  int key_len;
+  long change_to_upper, num_key;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a|l", &array, &change_to_upper) == FAILURE)
+  {
+    RETURN_NULL();
+  }
+
+  arr_hash = Z_ARRVAL_P(array);
+  array_init_size(return_value, zend_hash_num_elements(arr_hash));
+  zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
+  while (zend_hash_get_current_data_ex(arr_hash, (void**)&value, &pointer) == SUCCESS)
+  {
+    zval_add_ref(value);
+    switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 0, &pointer))
+    {
+         case HASH_KEY_IS_STRING:
+             key = estrndup(key, key_len - 1);
+             if (change_to_upper)
+             {
+                php_strtoupper(key, key_len - 1);
+             } else {
+                php_strtolower(key, key_len - 1);
+             }
+             zend_hash_update(Z_ARRVAL_P(return_value), key, key_len, value, sizeof(value), NULL);
+             efree(key);
+             break;
+         case HASH_KEY_IS_LONG:
+             zend_hash_index_update(Z_ARRVAL_P(return_value), num_key, value, sizeof(value), NULL);
+             break;
     }
-
-
-    
-    
-    
+    zend_hash_move_forward_ex(arr_hash, &pointer); 
+  }
 }

@@ -43,7 +43,10 @@ PHP_RSHUTDOWN_FUNCTION(peanut_php);
 PHP_MINFO_FUNCTION(peanut_php);
 
 PHP_FUNCTION(confirm_peanut_php_compiled);	/* For testing, remove later. */
+
+
 PHP_FUNCTION(peanut_array_keys);
+PHP_FUNCTION(peanut_array_change_key_case);
 
 /* 
   	Declare any global variables you may need between the BEGIN
