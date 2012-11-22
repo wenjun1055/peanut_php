@@ -18,4 +18,9 @@
 		<td>peanut_array_change_key_case</td>
 		<td>array_change_key_case</td>
 	</tr>
+	<tr>
+		<td>2012-11-22</td>
+		<td>peanut_array_chunk</td>
+		<td>array_chunk</td>
+	</tr>
 </table>

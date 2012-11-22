@@ -43,6 +43,8 @@ PHP_FUNCTION(peanut_array_keys)
      } 
 }
 
+
+
 PHP_FUNCTION(peanut_array_change_key_case)
 {
   zval *array, **value;
@@ -82,4 +84,60 @@ PHP_FUNCTION(peanut_array_change_key_case)
     }
     zend_hash_move_forward_ex(arr_hash, &pointer); 
   }
+}
+
+
+PHP_FUNCTION(peanut_array_chunk)
+{
+    zval *array, **entry;
+    zval *temp_array = NULL;
+    HashTable *arr_hash;
+    HashPointer pointer;
+    char *key;
+    int key_len, array_len, count = 0;
+    long len, flag, num_key;
+    array_init(return_value);
+  
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "al|l", &array, &len, &flag) == FAILURE)
+    {
+      RETURN_NULL();
+    }
+
+    arr_hash = Z_ARRVAL_P(array);
+    array_len = zend_hash_num_elements(arr_hash);
+    zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
+
+    while (zend_hash_get_current_data_ex(arr_hash, (void**)&entry, &pointer) == SUCCESS)
+    {
+      if (!temp_array)
+      {
+        MAKE_STD_ZVAL(temp_array);
+        array_init(temp_array);
+      }
+      zval_add_ref(entry);
+
+      if (flag)
+      {
+        switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 0, &pointer))
+        {
+            case HASH_KEY_IS_LONG:
+              add_index_zval(temp_array, num_key, *entry);
+              break;
+            case HASH_KEY_IS_STRING:
+                add_assoc_zval_ex(temp_array, key, key_len, *entry);
+                break;
+        }
+      } else {
+            add_next_index_zval(temp_array, *entry);
+      }
+      zend_hash_move_forward_ex(arr_hash, &pointer);
+      count++;
+
+      if ( !(count % len) || (count == array_len))
+      {
+        add_next_index_zval(return_value, temp_array);
+        temp_array = NULL;
+      }
+    }
+
 }

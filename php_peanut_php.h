@@ -47,7 +47,7 @@ PHP_FUNCTION(confirm_peanut_php_compiled);	/* For testing, remove later. */
 
 PHP_FUNCTION(peanut_array_keys);
 PHP_FUNCTION(peanut_array_change_key_case);
-
+PHP_FUNCTION(peanut_array_chunk);
 /* 
   	Declare any global variables you may need between the BEGIN
 	and END macros here:     
