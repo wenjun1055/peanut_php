@@ -60,13 +60,9 @@ PHP_FUNCTION(peanut_array_change_key_case)
   arr_hash = Z_ARRVAL_P(array);
   array_init_size(return_value, zend_hash_num_elements(arr_hash));
   zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
- MAKE_STD_ZVAL(*value); 
-    printf("0----%d\n",(**value).refcount__gc);
   while (zend_hash_get_current_data_ex(arr_hash, (void**)&value, &pointer) == SUCCESS)
   {
-
-        printf("1----%d\n",(**value).refcount__gc);
-    zval_add_ref(value); 
+    zval_add_ref(value);
     switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 0, &pointer))
     {
          case HASH_KEY_IS_STRING:
@@ -76,19 +72,14 @@ PHP_FUNCTION(peanut_array_change_key_case)
                 php_strtoupper(key, key_len - 1);
              } else {
                 php_strtolower(key, key_len - 1);
-             } 
+             }
              zend_hash_update(Z_ARRVAL_P(return_value), key, key_len, value, sizeof(value), NULL);
-             printf("2----%d\n",(**value).refcount__gc);
              efree(key);
              break;
          case HASH_KEY_IS_LONG:
              zend_hash_index_update(Z_ARRVAL_P(return_value), num_key, value, sizeof(value), NULL);
-             printf("3----%d\n",(**value).refcount__gc);
              break;
     }
-    printf("4----%d\n",(**value).refcount__gc);
     zend_hash_move_forward_ex(arr_hash, &pointer); 
   }
-  
-    printf("5----%d\n",(**value).refcount__gc);
 }
