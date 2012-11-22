@@ -13,9 +13,10 @@ modules/*
 acinclude.m4
 autom4te*
 aclocal.m4
-
+CREDITS
+EXPERIMENTAL
 config.guess
-
+config.win32
 config.log
 
 config.nice
