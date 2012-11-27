@@ -139,5 +139,66 @@ PHP_FUNCTION(peanut_array_chunk)
         temp_array = NULL;
       }
     }
+}
+
+
+PHP_FUNCTION(peanut_array_combine)
+{
+  zval *array_key, *array_value, **entry_key, **entry_value;
+  HashPointer pointer_key, pointer_value;
+  HashTable *arr_key, *arr_value;
+  uint array_len;
+  
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "aa", &array_key, &array_value) == FAILURE)
+  {
+    RETURN_NULL();
+  }
+
+  array_len = zend_hash_num_elements(Z_ARRVAL_P(array_key));
+
+  if (array_len == zend_hash_num_elements(Z_ARRVAL_P(array_value)))
+  {
+    array_init_size(return_value, array_len);
+  } else {
+     php_error_docref(NULL TSRMLS_CC, E_WARNING, "Array was modified by the user comparison function");
+     RETURN_FALSE;
+  }
+
+  arr_key   = Z_ARRVAL_P(array_key);
+  arr_value = Z_ARRVAL_P(array_value);
+  zend_hash_internal_pointer_reset_ex(arr_key, &pointer_key);
+  zend_hash_internal_pointer_reset_ex(arr_value, &pointer_value);
+
+  while ( (zend_hash_get_current_data_ex(arr_key, (void**)&entry_key, &pointer_key) == SUCCESS) 
+      && (zend_hash_get_current_data_ex(arr_value, (void**)&entry_value, &pointer_value) == SUCCESS) )
+  {
+      zval_add_ref(entry_key);
+      zval_add_ref(entry_value);
+      if (Z_TYPE_PP(entry_key) == IS_LONG)
+      {
+        add_index_zval(return_value, Z_LVAL_PP(entry_key), *entry_value);
+      }
+      else if (Z_TYPE_PP(entry_key) == IS_STRING)
+      {
+        add_assoc_zval(return_value, Z_STRVAL_PP(entry_key), *entry_value);
+      }
+      else 
+      {
+        zval temp;
+        temp = **entry_key;
+        zval_copy_ctor(&temp);
+        convert_to_string(&temp);
+        add_assoc_zval(return_value, Z_STRVAL_P(&temp), *entry_value);
+        zval_dtor(&temp);
+      }
+
+      zend_hash_move_forward_ex(arr_key, &pointer_key);
+      zend_hash_move_forward_ex(arr_value, &pointer_value);
+
+  }
+  
+
+
+
 
 }

@@ -43,6 +43,7 @@ const zend_function_entry peanut_php_functions[] = {
 	PHP_FE(peanut_array_keys, NULL)
 	PHP_FE(peanut_array_change_key_case, NULL)
   PHP_FE(peanut_array_chunk, NULL)
+  PHP_FE(peanut_array_combine, NULL)
   PHP_FE_END	/* Must be the last line in peanut_php_functions[] */
 };
 /* }}} */

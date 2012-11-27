@@ -23,4 +23,9 @@
 		<td>peanut_array_chunk</td>
 		<td>array_chunk</td>
 	</tr>
+	<tr>
+		<td>2012-11-27</td>
+		<td>peanut_array_combine</td>
+		<td>array_combine</td>
+	</tr>
 </table>

@@ -12,3 +12,6 @@ PHP_FUNCTION(peanut_array_change_key_case);
 
 /* array_chunk  */
 PHP_FUNCTION(peanut_array_chunk);
+
+/* array_combine  */
+PHP_FUNCTION(peanut_array_combine);
