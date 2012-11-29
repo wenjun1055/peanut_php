@@ -15,3 +15,6 @@ PHP_FUNCTION(peanut_array_chunk);
 
 /* array_combine  */
 PHP_FUNCTION(peanut_array_combine);
+
+/* array_count_values */
+PHP_FUNCTION(peanut_array_count_values);

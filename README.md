@@ -28,4 +28,9 @@
 		<td>peanut_array_combine</td>
 		<td>array_combine</td>
 	</tr>
+	<tr>
+		<td>2012-11-29</td>
+		<td>peanut_array_count_values</td>
+		<td>array_count_values</td>
+	</tr>
 </table>

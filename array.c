@@ -125,8 +125,8 @@ PHP_FUNCTION(peanut_array_chunk)
               break;
             case HASH_KEY_IS_STRING:
                 add_assoc_zval_ex(temp_array, key, key_len, *entry);
-                break;
-        }
+                 break;
+         }
       } else {
             add_next_index_zval(temp_array, *entry);
       }
@@ -138,7 +138,7 @@ PHP_FUNCTION(peanut_array_chunk)
         add_next_index_zval(return_value, temp_array);
         temp_array = NULL;
       }
-    }
+    } 
 }
 
 
@@ -161,7 +161,7 @@ PHP_FUNCTION(peanut_array_combine)
     array_init_size(return_value, array_len);
   } else {
      php_error_docref(NULL TSRMLS_CC, E_WARNING, "Array was modified by the user comparison function");
-     RETURN_FALSE;
+     RETURN_FALSE; 
   }
 
   arr_key   = Z_ARRVAL_P(array_key);
@@ -172,7 +172,7 @@ PHP_FUNCTION(peanut_array_combine)
   while ( (zend_hash_get_current_data_ex(arr_key, (void**)&entry_key, &pointer_key) == SUCCESS) 
       && (zend_hash_get_current_data_ex(arr_value, (void**)&entry_value, &pointer_value) == SUCCESS) )
   {
-      zval_add_ref(entry_key);
+       zval_add_ref(entry_key);
       zval_add_ref(entry_value);
       if (Z_TYPE_PP(entry_key) == IS_LONG)
       {
@@ -189,16 +189,83 @@ PHP_FUNCTION(peanut_array_combine)
         zval_copy_ctor(&temp);
         convert_to_string(&temp);
         add_assoc_zval(return_value, Z_STRVAL_P(&temp), *entry_value);
-        zval_dtor(&temp);
+        zval_dtor(&temp); 
       }
 
       zend_hash_move_forward_ex(arr_key, &pointer_key);
       zend_hash_move_forward_ex(arr_value, &pointer_value);
 
   }
-  
-
-
-
-
 }
+
+
+PHP_FUNCTION(peanut_array_count_values)
+{
+    zval *array, **entry, **data;
+    HashTable *arr_hash;
+    HashPointer pointer;
+    int keys_len;
+    array_init(return_value);
+    
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    arr_hash = Z_ARRVAL_P(array);
+    zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
+    
+    while (zend_hash_get_current_data_ex(arr_hash, (void**)&entry, &pointer) == SUCCESS)
+    {
+        if (Z_TYPE_PP(entry) == IS_LONG)
+        {
+            zval_add_ref(entry);
+            keys_len = zend_hash_num_elements(Z_ARRVAL_P(return_value));
+            if (keys_len)
+            {
+                if (zend_hash_index_find(Z_ARRVAL_P(return_value), Z_LVAL(**entry), (void**)&data) == SUCCESS)
+                {
+                    zval_add_ref(data);
+                    Z_LVAL_PP(data)++;
+                    zend_hash_index_update(Z_ARRVAL_P(return_value),Z_LVAL(**entry), (void*)data, sizeof(zval *), NULL);
+                } else {
+                    add_index_long(return_value, Z_LVAL(**entry), 1);
+                }
+             } else {
+                add_index_long(return_value, Z_LVAL(**entry), 1);
+             }
+        } else if (Z_TYPE_PP(entry) == IS_STRING)
+        {
+            zval temp_str;
+            temp_str = **entry;
+            zval_copy_ctor(&temp_str);
+            keys_len = zend_hash_num_elements(Z_ARRVAL_P(return_value));
+            if (keys_len)
+            {
+                if (zend_hash_find(Z_ARRVAL_P(return_value), Z_STRVAL(temp_str), Z_STRLEN(temp_str)+1, (void**)&data) == SUCCESS)
+                {
+                    zval_add_ref(data);
+                    Z_LVAL_PP(data)++;
+                    zend_hash_update(Z_ARRVAL_P(return_value), Z_STRVAL(temp_str), Z_STRLEN(temp_str) + 1, (void*)data, sizeof(zval *), NULL);
+                } else {
+                    add_assoc_long(return_value, Z_STRVAL(temp_str), 1);
+                }
+            } else {
+                add_assoc_long(return_value, Z_STRVAL(temp_str), 1);
+            }
+        } else {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "peanut_array_count_values(): Can only count STRING and INTEGER values!");
+        }
+        zend_hash_move_forward_ex(arr_hash, &pointer);
+    }
+}
+
+
+
+
+
+
+
+
+
+

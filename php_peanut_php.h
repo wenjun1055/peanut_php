@@ -49,6 +49,9 @@ PHP_FUNCTION(peanut_array_keys);
 PHP_FUNCTION(peanut_array_change_key_case);
 PHP_FUNCTION(peanut_array_chunk);
 PHP_FUNCTION(peanut_array_combine);
+PHP_FUNCTION(peanut_array_count_values);
+
+
 
 /* 
   	Declare any global variables you may need between the BEGIN
