@@ -45,6 +45,7 @@ const zend_function_entry peanut_php_functions[] = {
   PHP_FE(peanut_array_chunk, NULL)
   PHP_FE(peanut_array_combine, NULL)
   PHP_FE(peanut_array_count_values, NULL)
+  PHP_FE(peanut_array_fill, NULL)
   PHP_FE_END	/* Must be the last line in peanut_php_functions[] */
 };
 /* }}} */

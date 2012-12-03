@@ -33,4 +33,9 @@
 		<td>peanut_array_count_values</td>
 		<td>array_count_values</td>
 	</tr>
+	<tr>
+		<td>2012-12-03</td>
+		<td>peanut_array_fill</td>
+		<td>array_fill</td>
+	</tr>
 </table>

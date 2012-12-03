@@ -261,6 +261,34 @@ PHP_FUNCTION(peanut_array_count_values)
 }
 
 
+PHP_FUNCTION(peanut_array_fill)
+{
+    int i = 1;
+    long num, start_index;
+    zval *value;
+   
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llz", &start_index, &num, &value) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+   
+    if (num < 1)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "Number of elements must be positive");
+        RETURN_FALSE;
+    }
+
+    array_init_size(return_value, num);
+    add_index_zval(return_value, start_index, value);
+    zval_add_ref(&value);
+    
+    for (i = 1; i < num; i++)
+    {
+        add_next_index_zval(return_value, value);
+        zval_add_ref(&value);
+    }
+}
+
 
 
 
