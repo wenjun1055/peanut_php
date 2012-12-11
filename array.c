@@ -17,19 +17,16 @@ PHP_FUNCTION(peanut_array_keys)
     long num_key;
     array_init(return_value);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE)
-    {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
         RETUTN_NULL();
     }
     
     arr_hash = Z_ARRVAL_P(array);
     zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
-    while (zend_hash_get_current_data_ex(arr_hash, (void**)&data, &pointer) == SUCCESS)
-    {
+    while (zend_hash_get_current_data_ex(arr_hash, (void**)&data, &pointer) == SUCCESS) {
         MAKE_STD_ZVAL(temp_key);
         key_len = 0;
-        switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 1, &pointer))
-        {
+        switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 1, &pointer)) {
             case HASH_KEY_IS_STRING:
                 ZVAL_STRINGL(temp_key, key, key_len, 0);
                 add_next_index_zval(return_value, temp_key);
@@ -54,23 +51,19 @@ PHP_FUNCTION(peanut_array_change_key_case)
   int key_len;
   long change_to_upper, num_key;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a|l", &array, &change_to_upper) == FAILURE)
-  {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a|l", &array, &change_to_upper) == FAILURE) {
     RETURN_NULL();
   }
 
   arr_hash = Z_ARRVAL_P(array);
   array_init_size(return_value, zend_hash_num_elements(arr_hash));
   zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
-  while (zend_hash_get_current_data_ex(arr_hash, (void**)&value, &pointer) == SUCCESS)
-  {
+  while (zend_hash_get_current_data_ex(arr_hash, (void**)&value, &pointer) == SUCCESS) {
     zval_add_ref(value);
-    switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 0, &pointer))
-    {
+    switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 0, &pointer)) {
          case HASH_KEY_IS_STRING:
              key = estrndup(key, key_len - 1);
-             if (change_to_upper)
-             {
+             if (change_to_upper) {
                 php_strtoupper(key, key_len - 1);
              } else {
                 php_strtolower(key, key_len - 1);
@@ -98,8 +91,7 @@ PHP_FUNCTION(peanut_array_chunk)
     long len, flag, num_key;
     array_init(return_value);
   
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "al|l", &array, &len, &flag) == FAILURE)
-    {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "al|l", &array, &len, &flag) == FAILURE) {
       RETURN_NULL();
     }
 
@@ -107,19 +99,15 @@ PHP_FUNCTION(peanut_array_chunk)
     array_len = zend_hash_num_elements(arr_hash);
     zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
 
-    while (zend_hash_get_current_data_ex(arr_hash, (void**)&entry, &pointer) == SUCCESS)
-    {
-      if (!temp_array)
-      {
+    while (zend_hash_get_current_data_ex(arr_hash, (void**)&entry, &pointer) == SUCCESS) {
+      if (!temp_array) {
         MAKE_STD_ZVAL(temp_array);
         array_init(temp_array);
       }
       zval_add_ref(entry);
 
-      if (flag)
-      {
-        switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 0, &pointer))
-        {
+      if (flag) {
+        switch (zend_hash_get_current_key_ex(arr_hash, &key, &key_len, &num_key, 0, &pointer)) {
             case HASH_KEY_IS_LONG:
               add_index_zval(temp_array, num_key, *entry);
               break;
@@ -133,8 +121,7 @@ PHP_FUNCTION(peanut_array_chunk)
       zend_hash_move_forward_ex(arr_hash, &pointer);
       count++;
 
-      if ( !(count % len) || (count == array_len))
-      {
+      if ( !(count % len) || (count == array_len)) {
         add_next_index_zval(return_value, temp_array);
         temp_array = NULL;
       }
@@ -149,15 +136,13 @@ PHP_FUNCTION(peanut_array_combine)
   HashTable *arr_key, *arr_value;
   uint array_len;
   
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "aa", &array_key, &array_value) == FAILURE)
-  {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "aa", &array_key, &array_value) == FAILURE) {
     RETURN_NULL();
   }
 
   array_len = zend_hash_num_elements(Z_ARRVAL_P(array_key));
 
-  if (array_len == zend_hash_num_elements(Z_ARRVAL_P(array_value)))
-  {
+  if (array_len == zend_hash_num_elements(Z_ARRVAL_P(array_value))) {
     array_init_size(return_value, array_len);
   } else {
      php_error_docref(NULL TSRMLS_CC, E_WARNING, "Array was modified by the user comparison function");
@@ -174,16 +159,11 @@ PHP_FUNCTION(peanut_array_combine)
   {
        zval_add_ref(entry_key);
       zval_add_ref(entry_value);
-      if (Z_TYPE_PP(entry_key) == IS_LONG)
-      {
-        add_index_zval(return_value, Z_LVAL_PP(entry_key), *entry_value);
-      }
-      else if (Z_TYPE_PP(entry_key) == IS_STRING)
-      {
-        add_assoc_zval(return_value, Z_STRVAL_PP(entry_key), *entry_value);
-      }
-      else 
-      {
+      if (Z_TYPE_PP(entry_key) == IS_LONG) {
+          add_index_zval(return_value, Z_LVAL_PP(entry_key), *entry_value);
+      } else if (Z_TYPE_PP(entry_key) == IS_STRING) {
+          add_assoc_zval(return_value, Z_STRVAL_PP(entry_key), *entry_value);
+      } else {
         zval temp;
         temp = **entry_key;
         zval_copy_ctor(&temp);
@@ -207,24 +187,19 @@ PHP_FUNCTION(peanut_array_count_values)
     int keys_len;
     array_init(return_value);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE)
-    {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
         RETURN_NULL();
     }
 
     arr_hash = Z_ARRVAL_P(array);
     zend_hash_internal_pointer_reset_ex(arr_hash, &pointer);
     
-    while (zend_hash_get_current_data_ex(arr_hash, (void**)&entry, &pointer) == SUCCESS)
-    {
-        if (Z_TYPE_PP(entry) == IS_LONG)
-        {
+    while (zend_hash_get_current_data_ex(arr_hash, (void**)&entry, &pointer) == SUCCESS) {
+        if (Z_TYPE_PP(entry) == IS_LONG) {
             zval_add_ref(entry);
             keys_len = zend_hash_num_elements(Z_ARRVAL_P(return_value));
-            if (keys_len)
-            {
-                if (zend_hash_index_find(Z_ARRVAL_P(return_value), Z_LVAL(**entry), (void**)&data) == SUCCESS)
-                {
+            if (keys_len) {
+                if (zend_hash_index_find(Z_ARRVAL_P(return_value), Z_LVAL(**entry), (void**)&data) == SUCCESS) {
                     zval_add_ref(data);
                     Z_LVAL_PP(data)++;
                     zend_hash_index_update(Z_ARRVAL_P(return_value),Z_LVAL(**entry), (void*)data, sizeof(zval *), NULL);
@@ -234,16 +209,13 @@ PHP_FUNCTION(peanut_array_count_values)
              } else {
                 add_index_long(return_value, Z_LVAL(**entry), 1);
              }
-        } else if (Z_TYPE_PP(entry) == IS_STRING)
-        {
+        } else if (Z_TYPE_PP(entry) == IS_STRING) {
             zval temp_str;
             temp_str = **entry;
             zval_copy_ctor(&temp_str);
             keys_len = zend_hash_num_elements(Z_ARRVAL_P(return_value));
-            if (keys_len)
-            {
-                if (zend_hash_find(Z_ARRVAL_P(return_value), Z_STRVAL(temp_str), Z_STRLEN(temp_str)+1, (void**)&data) == SUCCESS)
-                {
+            if (keys_len) {
+                if (zend_hash_find(Z_ARRVAL_P(return_value), Z_STRVAL(temp_str), Z_STRLEN(temp_str)+1, (void**)&data) == SUCCESS) {
                     zval_add_ref(data);
                     Z_LVAL_PP(data)++;
                     zend_hash_update(Z_ARRVAL_P(return_value), Z_STRVAL(temp_str), Z_STRLEN(temp_str) + 1, (void*)data, sizeof(zval *), NULL);
@@ -267,13 +239,11 @@ PHP_FUNCTION(peanut_array_fill)
     long num, start_index;
     zval *value;
    
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llz", &start_index, &num, &value) == FAILURE)
-    {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "llz", &start_index, &num, &value) == FAILURE) {
         RETURN_NULL();
     }
    
-    if (num < 1)
-    {
+    if (num < 1) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "Number of elements must be positive");
         RETURN_FALSE;
     }
@@ -282,8 +252,7 @@ PHP_FUNCTION(peanut_array_fill)
     add_index_zval(return_value, start_index, value);
     zval_add_ref(&value);
     
-    for (i = 1; i < num; i++)
-    {
+    for (i = 1; i < num; i++) {
         add_next_index_zval(return_value, value);
         zval_add_ref(&value);
     }
